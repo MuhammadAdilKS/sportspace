@@ -1,13 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { INITIAL_BOOKINGS } from "@/lib/mockData";
+import { INITIAL_BOOKINGS, Booking } from "@/lib/mockData";
+import { fetchUserBookings, cancelBookingInDb } from "@/lib/supabase";
 
 export default function MyBookingsPage() {
-  const [bookings, setBookings] = useState(INITIAL_BOOKINGS);
+  const [bookings, setBookings] = useState<Booking[]>(INITIAL_BOOKINGS);
   const [activeTab, setActiveTab] = useState<"upcoming" | "completed" | "cancelled">("upcoming");
   const [ratedBookings, setRatedBookings] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    // Load from Supabase and local storage
+    const loadBookings = async () => {
+      let localBookings: Booking[] = [];
+      if (typeof window !== "undefined") {
+        const stored = localStorage.getItem("sportspace_user_bookings");
+        if (stored) {
+          try {
+            localBookings = JSON.parse(stored);
+          } catch {}
+        }
+      }
+
+      const remoteBookings = await fetchUserBookings();
+
+      // Combine without duplicates
+      const map = new Map<string, Booking>();
+      [...localBookings, ...remoteBookings, ...INITIAL_BOOKINGS].forEach((b) => {
+        if (!map.has(b.id)) {
+          map.set(b.id, b);
+        }
+      });
+      setBookings(Array.from(map.values()));
+    };
+
+    loadBookings();
+  }, []);
 
   const upcomingBookings = bookings.filter((b) => b.status === "upcoming");
   const completedBookings = bookings.filter((b) => b.status === "completed");
@@ -17,11 +46,19 @@ export default function MyBookingsPage() {
     setRatedBookings((prev) => ({ ...prev, [id]: stars }));
   };
 
-  const handleCancel = (id: string) => {
+  const handleCancel = async (id: string) => {
     if (confirm("Are you sure you want to cancel this booking? Full refund will be processed to source.")) {
-      setBookings((prev) =>
-        prev.map((b) => (b.id === id ? { ...b, status: "cancelled", statusBadge: "Cancelled" } : b))
-      );
+      await cancelBookingInDb(id);
+
+      setBookings((prev) => {
+        const updated = prev.map((b) =>
+          b.id === id ? { ...b, status: "cancelled" as const, statusBadge: "Cancelled" } : b
+        );
+        if (typeof window !== "undefined") {
+          localStorage.setItem("sportspace_user_bookings", JSON.stringify(updated));
+        }
+        return updated;
+      });
     }
   };
 

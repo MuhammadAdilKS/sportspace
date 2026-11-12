@@ -3,7 +3,8 @@
 import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { VENUES } from "@/lib/mockData";
+import { VENUES, Venue } from "@/lib/mockData";
+import { fetchVenueById } from "@/lib/supabase";
 
 export default function VenueDetailsPage() {
   return (
@@ -17,11 +18,17 @@ function VenueDetailsContent() {
   const router = useRouter();
   const params = useParams();
   const venueId = (params?.id as string) || "greenfield-arena";
-  const venue = VENUES.find((v) => v.id === venueId) || VENUES[0];
+  const [venue, setVenue] = useState<Venue>(() => VENUES.find((v) => v.id === venueId) || VENUES[0]);
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const [copiedShare, setCopiedShare] = useState(false);
+
+  useEffect(() => {
+    fetchVenueById(venueId).then((v) => {
+      if (v) setVenue(v);
+    });
+  }, [venueId]);
 
   const images = venue.images && venue.images.length > 0 ? venue.images : [
     "https://lh3.googleusercontent.com/aida-public/AB6AXuC6VewcbJl_Lmk33VydVwJvn-r5lKiDCUxAtb7s62BNFud6sM01ihX-vTC1fSMlm1AKvL85ryS-WtLIolzseSojxEPjweWC5zRLfDrxTBtX3qBNYM_hYdi8HQNNhbToNCy2wvLG5QcEtI5a120-ZPCkAby3ayanN9Xff4SksKnUSwxIVa2ROescRJbOy_htjRjrwOkLO_yMgSasxCkJHMxWhFaMGJjyn-UPXRnV4ACehHAoAbCmdxvN"

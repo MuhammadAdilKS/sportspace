@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -12,8 +12,25 @@ export default function BookingSummaryScreen() {
   const [whatsappOptIn, setWhatsappOptIn] = useState(true);
   const [securing, setSecuring] = useState(false);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedPhone = localStorage.getItem("sportspace_user_phone");
+      const savedName = localStorage.getItem("sportspace_user_name");
+      const savedEmail = localStorage.getItem("sportspace_user_email");
+      if (savedPhone) setPhone(savedPhone);
+      if (savedName) setName(savedName);
+      if (savedEmail) setEmail(savedEmail);
+    }
+  }, []);
+
   const handleProceed = () => {
     setSecuring(true);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("sportspace_lead_name", name);
+      localStorage.setItem("sportspace_lead_phone", phone);
+      localStorage.setItem("sportspace_lead_email", email);
+      localStorage.setItem("sportspace_lead_whatsapp", whatsappOptIn ? "true" : "false");
+    }
     setTimeout(() => {
       router.push("/checkout/payment");
     }, 600);

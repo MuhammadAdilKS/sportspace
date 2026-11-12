@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { USER_AVATAR } from "@/lib/mockData";
+import { supabase } from "@/lib/supabase";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -13,8 +14,46 @@ export default function ProfilePage() {
   const [userPhone, setUserPhone] = useState("+91 98765 43210");
   const [userEmail, setUserEmail] = useState("adil.sports@gmail.com");
 
-  const handleLogout = () => {
+  useEffect(() => {
+    // 1. Check local storage
+    if (typeof window !== "undefined") {
+      const savedPhone = localStorage.getItem("sportspace_user_phone");
+      const savedName = localStorage.getItem("sportspace_user_name");
+      const savedEmail = localStorage.getItem("sportspace_user_email");
+      if (savedPhone) setUserPhone(savedPhone);
+      if (savedName) setUserName(savedName);
+      if (savedEmail) setUserEmail(savedEmail);
+    }
+
+    // 2. Check Supabase auth session
+    supabase.auth.getUser().then(({ data }) => {
+      if (data?.user) {
+        if (data.user.email) setUserEmail(data.user.email);
+        if (data.user.phone) setUserPhone(data.user.phone);
+        if (data.user.user_metadata?.full_name) {
+          setUserName(data.user.user_metadata.full_name);
+        }
+      }
+    });
+  }, []);
+
+  const handleSaveProfile = () => {
+    setIsEditing(false);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("sportspace_user_name", userName);
+      localStorage.setItem("sportspace_user_phone", userPhone);
+      localStorage.setItem("sportspace_user_email", userEmail);
+    }
+  };
+
+  const handleLogout = async () => {
     if (confirm("Are you sure you want to log out of SportSpace?")) {
+      try {
+        await supabase.auth.signOut();
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("sportspace_auth_status");
+        }
+      } catch {}
       router.push("/login");
     }
   };
@@ -57,7 +96,7 @@ export default function ProfilePage() {
             </div>
 
             <button
-              onClick={() => setIsEditing(!isEditing)}
+              onClick={() => (isEditing ? handleSaveProfile() : setIsEditing(true))}
               className="shrink-0 bg-white/15 hover:bg-white/25 active:scale-95 transition-all text-white font-headline-sm text-xs font-semibold px-3.5 py-1.5 rounded-full flex items-center gap-1 shadow-sm border border-white/20 cursor-pointer"
               type="button"
             >

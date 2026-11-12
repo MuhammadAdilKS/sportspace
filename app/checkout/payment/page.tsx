@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { createBookingInDb, supabase } from "@/lib/supabase";
+import { Booking } from "@/lib/mockData";
 
 export default function PaymentScreen() {
   const router = useRouter();
@@ -10,11 +12,61 @@ export default function PaymentScreen() {
   const [upiId, setUpiId] = useState("adil@okaxis");
   const [processing, setProcessing] = useState(false);
 
-  const handlePay = () => {
+  const handlePay = async () => {
     setProcessing(true);
+    const randomNum = Math.floor(10000 + Math.random() * 90000);
+    const newBookingId = `SS-2026-${randomNum}`;
+    const qrPasscode = Math.floor(1000 + Math.random() * 9000).toString();
+
+    let leadName = "Adil Farooq";
+    let leadPhone = "+91 98765 43210";
+    let leadEmail = "adil.sports@gmail.com";
+
+    if (typeof window !== "undefined") {
+      leadName = localStorage.getItem("sportspace_lead_name") || leadName;
+      leadPhone = localStorage.getItem("sportspace_lead_phone") || leadPhone;
+      leadEmail = localStorage.getItem("sportspace_lead_email") || leadEmail;
+    }
+
+    const newBooking: Booking = {
+      id: newBookingId,
+      venueId: "greenfield-arena",
+      venueName: "Greenfield Arena & Turf",
+      pitch: "Pitch A • 7-a-side Synthetic Grass",
+      sport: "7-a-side Football",
+      date: "Fri, 23 Oct 2026",
+      timeSlot: "07:00 PM - 09:00 PM",
+      durationHours: 2,
+      address: "Near Alva's Campus, Moodbidri, Mangalore",
+      totalAmount: 1608,
+      status: "upcoming",
+      statusBadge: "Confirmed • In 2 Days",
+      paymentMethod: activeMethod === "upi" ? `UPI (${upiId})` : activeMethod.toUpperCase(),
+      qrPasscode,
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDXQiEwNd77VqW74_L_utRwQD5xQEfD3mcuzX__DAvSNYejA0Et3iRs4JzH_4g0pPp2fiHcx92MWXPJTgoOvG0iuc9JYZU7mgD-pXjgE6TJitlmKdSN_zUn71ABbrEve5U8H4YLuGipwY2rrRlZO0sr_y-snm8K5i0gtg0PCW5hjHJHb-XmobqeaGudZQGOlFxgN5FO1KDWD4nE045y0-Gxx5t79QU_tPgL-YXW7-TEzzSfueSU2q5B",
+      leadPlayerName: leadName,
+      phone: leadPhone,
+      email: leadEmail,
+      notes: "Locker & Bibs included",
+    };
+
+    try {
+      // Get auth user id if logged in
+      const { data: authData } = await supabase.auth.getUser();
+      await createBookingInDb(newBooking, authData?.user?.id || null);
+
+      if (typeof window !== "undefined") {
+        const stored = localStorage.getItem("sportspace_user_bookings");
+        const existingList: Booking[] = stored ? JSON.parse(stored) : [];
+        localStorage.setItem("sportspace_user_bookings", JSON.stringify([newBooking, ...existingList]));
+      }
+    } catch (err) {
+      console.warn("Booking creation note:", err);
+    }
+
     setTimeout(() => {
-      router.push("/booking/confirmed/SS-2026-48291");
-    }, 1200);
+      router.push(`/booking/confirmed/${newBookingId}`);
+    }, 1000);
   };
 
   return (

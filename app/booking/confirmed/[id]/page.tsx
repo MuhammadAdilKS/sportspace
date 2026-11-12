@@ -1,14 +1,82 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { supabase } from "@/lib/supabase";
+import { Booking, INITIAL_BOOKINGS } from "@/lib/mockData";
 
 export default function BookingConfirmationScreen() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-surface flex items-center justify-center font-body-md text-on-surface-variant">Loading booking confirmation...</div>}>
+      <BookingConfirmationContent />
+    </Suspense>
+  );
+}
+
+function BookingConfirmationContent() {
+  const params = useParams();
+  const idFromParam = (params?.id as string) || "SS-2026-48291";
   const [copied, setCopied] = useState(false);
-  const bookingId = "SS-2026-48291";
+  const [booking, setBooking] = useState<Booking>(() => {
+    return (
+      INITIAL_BOOKINGS.find((b) => b.id === idFromParam) || {
+        ...INITIAL_BOOKINGS[0],
+        id: idFromParam,
+      }
+    );
+  });
+
+  useEffect(() => {
+    // Check localStorage first
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("sportspace_user_bookings");
+      if (stored) {
+        try {
+          const list: Booking[] = JSON.parse(stored);
+          const found = list.find((b) => b.id === idFromParam);
+          if (found) {
+            setBooking(found);
+            return;
+          }
+        } catch {}
+      }
+    }
+
+    // Attempt Supabase fetch
+    supabase
+      .from("bookings")
+      .select("*")
+      .eq("id", idFromParam)
+      .single()
+      .then(({ data }) => {
+        if (data) {
+          setBooking({
+            id: data.id,
+            venueId: data.venue_id,
+            venueName: data.venue_name,
+            pitch: data.pitch,
+            sport: data.sport,
+            date: data.date,
+            timeSlot: data.time_slot,
+            durationHours: Number(data.duration_hours || 1),
+            address: data.address,
+            totalAmount: Number(data.total_amount || 0),
+            status: data.status,
+            statusBadge: data.status_badge,
+            paymentMethod: data.payment_method,
+            qrPasscode: data.qr_passcode,
+            image: data.image || INITIAL_BOOKINGS[0].image,
+            leadPlayerName: data.lead_player_name,
+            phone: data.phone,
+            email: data.email,
+          });
+        }
+      });
+  }, [idFromParam]);
 
   const copyBookingId = () => {
-    navigator.clipboard?.writeText(bookingId);
+    navigator.clipboard?.writeText(booking.id);
     setCopied(true);
     setTimeout(() => setCopied(false), 1800);
   };
@@ -43,14 +111,14 @@ export default function BookingConfirmationScreen() {
           </h1>
           <p className="font-body-md text-body-md text-on-surface-variant mt-space-xs max-w-xs leading-relaxed">
             We&apos;ve emailed and sent the WhatsApp pass to{" "}
-            <span className="font-semibold text-on-surface">+91 98765 43210</span>
+            <span className="font-semibold text-on-surface">{booking.phone}</span>
           </p>
 
           {/* Booking Reference Badge */}
           <div className="mt-space-md flex items-center gap-space-xs bg-surface-container-high px-space-md py-1.5 rounded-full shadow-sm">
             <span className="font-label-sm text-label-sm text-on-surface-variant">Booking ID:</span>
             <span className="font-label-md text-label-md text-on-surface tracking-wider">
-              {bookingId}
+              {booking.id}
             </span>
             <button
               type="button"
@@ -73,17 +141,16 @@ export default function BookingConfirmationScreen() {
               className="bg-cover bg-center w-full h-full opacity-40"
               style={{
                 backgroundImage:
-                  "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDjwxFDxwWFhBgBbuiOtkPubEahFzoYO0c1YkEEHwYRRT3nDWn-GuRlHfvhJ-l6Fus50tZOs0HwTUNSHvOYFoEHsOwThSg5yhGjsYICMrBpKGwXXFeGzj4aoyXA_nfOCP2-8_EaW-f82iPjIxEV6r7Xd6B1nObIVNkIN7uRquLILWwr0fv1xLn1a_OUx7QScRNaQMFju77vt2v12t59WpQzzeENDU86VumrtQZBm2iGveR66bIkq23J')",
+                  `url('${booking.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuDjwxFDxwWFhBgBbuiOtkPubEahFzoYO0c1YkEEHwYRRT3nDWn-GuRlHfvhJ-l6Fus50tZOs0HwTUNSHvOYFoEHsOwThSg5yhGjsYICMrBpKGwXXFeGzj4aoyXA_nfOCP2-8_EaW-f82iPjIxEV6r7Xd6B1nObIVNkIN7uRquLILWwr0fv1xLn1a_OUx7QScRNaQMFju77vt2v12t59WpQzzeENDU86VumrtQZBm2iGveR66bIkq23J"}')`,
               }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-primary-container via-transparent to-transparent" />
             <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between">
               <span className="px-2.5 py-0.5 rounded-full bg-secondary text-on-secondary font-label-sm text-label-sm inline-flex items-center gap-1 shadow-sm">
-                <span className="material-symbols-outlined text-[14px]">sports_soccer</span> 7v7
-                Football Match Slot
+                <span className="material-symbols-outlined text-[14px]">sports_soccer</span> {booking.sport} Match Slot
               </span>
               <span className="px-2 py-0.5 rounded bg-surface-container-lowest/20 backdrop-blur-sm text-on-primary font-caption text-caption uppercase tracking-wider">
-                Confirmed
+                {booking.statusBadge || "Confirmed"}
               </span>
             </div>
           </div>
@@ -93,13 +160,13 @@ export default function BookingConfirmationScreen() {
             <div className="flex items-start justify-between">
               <div>
                 <h2 className="font-headline-sm text-headline-sm text-primary-container">
-                  Greenfield Arena &amp; Turf
+                  {booking.venueName}
                 </h2>
                 <p className="font-body-md text-body-md text-on-surface-variant flex items-center gap-1 mt-0.5">
                   <span className="material-symbols-outlined text-[16px] text-secondary">
                     location_on
                   </span>{" "}
-                  Moodbidri, Mangalore
+                  {booking.address}
                 </p>
               </div>
               <div className="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary-container">
@@ -117,7 +184,7 @@ export default function BookingConfirmationScreen() {
                   <span className="material-symbols-outlined text-[16px] text-on-surface-variant">
                     calendar_today
                   </span>{" "}
-                  Fri, 23 Oct 2026
+                  {booking.date}
                 </span>
               </div>
               <div className="flex flex-col">
@@ -128,7 +195,7 @@ export default function BookingConfirmationScreen() {
                   <span className="material-symbols-outlined text-[16px] text-on-surface-variant">
                     schedule
                   </span>{" "}
-                  07:00 PM - 09:00 PM
+                  {booking.timeSlot}
                 </span>
               </div>
               <div className="flex flex-col mt-1">
@@ -136,7 +203,7 @@ export default function BookingConfirmationScreen() {
                   Pitch Details
                 </span>
                 <span className="font-label-md text-label-md text-on-surface mt-0.5 truncate">
-                  Pitch A (Synthetic Floodlit)
+                  {booking.pitch}
                 </span>
               </div>
               <div className="flex flex-col mt-1">
@@ -144,9 +211,9 @@ export default function BookingConfirmationScreen() {
                   Amount Paid
                 </span>
                 <span className="font-label-md text-label-md text-secondary mt-0.5 font-bold">
-                  ₹1,608{" "}
+                  ₹{booking.totalAmount.toLocaleString("en-IN")}{" "}
                   <span className="font-caption text-caption text-on-surface-variant font-normal">
-                    (UPI)
+                    ({booking.paymentMethod})
                   </span>
                 </span>
               </div>
@@ -191,7 +258,7 @@ export default function BookingConfirmationScreen() {
             <div className="mt-1 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container text-primary-container font-label-md text-label-md">
               <span className="material-symbols-outlined text-[16px] text-secondary">pin</span>
               <span>
-                Passcode: <span className="font-bold tracking-wider">4829</span>
+                Passcode: <span className="font-bold tracking-wider">{booking.qrPasscode || "4829"}</span>
               </span>
             </div>
           </div>

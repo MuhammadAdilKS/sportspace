@@ -1,9 +1,10 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { VENUES } from "@/lib/mockData";
+import { VENUES, Venue } from "@/lib/mockData";
+import { fetchVenues } from "@/lib/supabase";
 
 export default function VenuesListPage() {
   return (
@@ -17,6 +18,7 @@ function VenuesListContent() {
   const searchParams = useSearchParams();
   const sportParam = searchParams.get("sport") || "";
 
+  const [venues, setVenues] = useState<Venue[]>(VENUES);
   const [distanceFilterActive, setDistanceFilterActive] = useState(false);
   const [selectedSort, setSelectedSort] = useState<"nearest" | "price" | "rating">("nearest");
   const [showSortDropdown, setShowSortDropdown] = useState(false);
@@ -24,6 +26,12 @@ function VenuesListContent() {
   const [favorites, setFavorites] = useState<Record<string, boolean>>({
     "greenfield-arena": true,
   });
+
+  useEffect(() => {
+    fetchVenues().then((data) => {
+      if (data && data.length > 0) setVenues(data);
+    });
+  }, []);
 
   const toggleFavorite = (e: React.MouseEvent, venueId: string) => {
     e.preventDefault();
@@ -34,7 +42,7 @@ function VenuesListContent() {
     }));
   };
 
-  const displayedVenues = VENUES.filter((v) => {
+  const displayedVenues = venues.filter((v) => {
     if (distanceFilterActive && v.distanceKm > 3.0) return false;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
