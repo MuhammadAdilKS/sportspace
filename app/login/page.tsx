@@ -13,32 +13,48 @@ export default function LoginSignUpScreen() {
     const handleGoogleAuth = async () => {
         setLoading(true);
         setErrorMsg(null);
+
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://vqikjvjkvpaqxxchjkqn.supabase.co";
+
         try {
+            // Pre-check if Google OAuth provider is enabled on this Supabase project
+            const preCheck = await fetch(`${supabaseUrl}/auth/v1/authorize?provider=google`, { method: "GET" });
+            
+            if (!preCheck.ok) {
+                const errJson = await preCheck.json().catch(() => ({}));
+                if (errJson?.msg?.includes("provider is not enabled") || preCheck.status === 400) {
+                    setErrorMsg("Google Provider is not enabled in your Supabase project yet. You can enable it in the Supabase Dashboard, or click below to continue in Demo Mode.");
+                    setLoading(false);
+                    return;
+                }
+            }
+
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: "google",
                 options: {
                     redirectTo: typeof window !== "undefined" ? `${window.location.origin}/home` : undefined,
                 },
             });
+
             if (error) {
-                console.info("Google OAuth notice:", error.message);
-                // Fallback for seamless demo testing if Google provider is not yet enabled in Supabase dashboard
-                if (typeof window !== "undefined") {
-                    localStorage.setItem("sportspace_auth_status", "authenticated");
-                    localStorage.setItem("sportspace_user_name", "Adil Farooq");
-                    localStorage.setItem("sportspace_user_email", "adil.sports@gmail.com");
-                }
-                router.push("/home");
+                setErrorMsg(error.message);
             }
-        } catch (err) {
-            console.warn("OAuth fallback:", err);
-            if (typeof window !== "undefined") {
-                localStorage.setItem("sportspace_auth_status", "authenticated");
-            }
-            router.push("/home");
+        } catch (err: any) {
+            console.warn("OAuth verification note:", err);
+            setErrorMsg("Unable to reach Google OAuth right now. Click below to continue in Demo Mode.");
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleDemoLogin = () => {
+        if (typeof window !== "undefined") {
+            localStorage.setItem("sportspace_auth_status", "authenticated");
+            localStorage.setItem("sportspace_user_name", "Adil Farooq");
+            localStorage.setItem("sportspace_user_email", "adil.sports@gmail.com");
+            localStorage.setItem("sportspace_user_phone", "+91 98765 43210");
+        }
+        router.push("/home");
     };
 
     const handleGuestExplore = () => {
@@ -142,10 +158,21 @@ export default function LoginSignUpScreen() {
                                 : "Join the premier sports network in Karnataka with one-click Google verification."}
                         </p>
 
+                        {/* Error Alert Box with Immediate Action */}
                         {errorMsg && (
-                            <div className="mt-3 p-2.5 rounded-xl bg-error-container text-error text-xs font-medium flex items-center gap-2">
-                                <span className="material-symbols-outlined text-[16px]">info</span>
-                                <span>{errorMsg}</span>
+                            <div className="mt-4 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-on-surface text-xs flex flex-col gap-2">
+                                <div className="flex items-start gap-2 text-amber-600 dark:text-amber-400 font-medium">
+                                    <span className="material-symbols-outlined text-[18px] shrink-0 mt-0.5">info</span>
+                                    <span>{errorMsg}</span>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={handleDemoLogin}
+                                    className="self-start mt-1 px-3 py-1.5 rounded-full bg-secondary text-on-secondary font-label-sm text-xs font-semibold hover:bg-secondary/90 transition-all cursor-pointer shadow-xs flex items-center gap-1"
+                                >
+                                    <span>Continue in Demo Mode</span>
+                                    <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                                </button>
                             </div>
                         )}
 
