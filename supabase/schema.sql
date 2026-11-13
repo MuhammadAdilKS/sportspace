@@ -182,3 +182,4 @@ CREATE POLICY "Reviews are viewable by everyone"
 
 CREATE POLICY "Authenticated users can post reviews" 
   ON public.reviews FOR INSERT WITH CHECK (true);
+

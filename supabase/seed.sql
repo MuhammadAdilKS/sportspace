@@ -305,3 +305,4 @@ INSERT INTO public.bookings (
   NULL
 )
 ON CONFLICT (id) DO NOTHING;
+
