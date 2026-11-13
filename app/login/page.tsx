@@ -50,8 +50,8 @@ export default function LoginSignUpScreen() {
     const handleDemoLogin = () => {
         if (typeof window !== "undefined") {
             localStorage.setItem("sportspace_auth_status", "authenticated");
-            localStorage.setItem("sportspace_user_name", "Adil Farooq");
-            localStorage.setItem("sportspace_user_email", "adil.sports@gmail.com");
+            localStorage.setItem("sportspace_user_name", "Guest Player");
+            localStorage.setItem("sportspace_user_email", "guest@sportspace.com");
             localStorage.setItem("sportspace_user_phone", "+91 98765 43210");
         }
         router.push("/home");

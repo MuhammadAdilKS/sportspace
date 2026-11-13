@@ -302,13 +302,13 @@ export const INITIAL_BOOKINGS: Booking[] = [
     totalAmount: 1608,
     status: 'upcoming',
     statusBadge: 'Confirmed • In 2 Days',
-    paymentMethod: 'UPI (adil@okaxis)',
+    paymentMethod: 'UPI (player@okaxis)',
     qrPasscode: '4829',
     image:
       'https://lh3.googleusercontent.com/aida-public/AB6AXuDXQiEwNd77VqW74_L_utRwQD5xQEfD3mcuzX__DAvSNYejA0Et3iRs4JzH_4g0pPp2fiHcx92MWXPJTgoOvG0iuc9JYZU7mgD-pXjgE6TJitlmKdSN_zUn71ABbrEve5U8H4YLuGipwY2rrRlZO0sr_y-snm8K5i0gtg0PCW5hjHJHb-XmobqeaGudZQGOlFxgN5FO1KDWD4nE045y0-Gxx5t79QU_tPgL-YXW7-TEzzSfueSU2q5B',
-    leadPlayerName: 'Adil Farooq',
+    leadPlayerName: 'Guest Player',
     phone: '+91 98765 43210',
-    email: 'adil.sports@gmail.com',
+    email: 'guest@sportspace.com',
     notes: 'Locker & Bibs included'
   },
   {
@@ -328,9 +328,9 @@ export const INITIAL_BOOKINGS: Booking[] = [
     qrPasscode: '9102',
     image:
       'https://lh3.googleusercontent.com/aida-public/AB6AXuDWht86Ufsz4m0V4M0oAouT_AhHRTHxCuv8IIvomah66YWJOCDBT7JNPz-iqP5g47RCwjVlurMflzTkB0xLO9ccgC9wjuKdSVua12ZBhEh9MkmVRc65D1u4yblH4HB-CELjqZWGOSjB95JxEPdeAZk0NRHJYrEkBYXD5lPZNaU8yOGMk-P0HMQUjB7g4_-2s4HUDY1Omx4m1-msrgaLVJH1RFA5QCAvsQSIsI8npnVKUoLMfjjJa2iB',
-    leadPlayerName: 'Adil Farooq',
+    leadPlayerName: 'Guest Player',
     phone: '+91 98765 43210',
-    email: 'adil.sports@gmail.com'
+    email: 'guest@sportspace.com'
   },
   {
     id: 'SS-2026-31844',
@@ -349,9 +349,9 @@ export const INITIAL_BOOKINGS: Booking[] = [
     qrPasscode: '1844',
     image:
       'https://lh3.googleusercontent.com/aida-public/AB6AXuAJxQEEnWmKJXe9RScy6U_K7Pv3vqXsiRhTUP32OvrUuTpwrh5ioGq9h3Y32fJiYytKgns79hc3txmF0IatoDZLIUC1kAzHdvot3abwYPLt_oAlqrWAacCb-dgGzabDt_x6OcKVeUEeYFPV17R_qQE_VuxCNYPnSOvkERMpWeuqp1QFytwkkrJ7hiQCw8kjxHAfrOiaZkw4gfaqrP7J8V15wRdUHGSmUp82umAM6DQQ_VPl9-sT193E',
-    leadPlayerName: 'Adil Farooq',
+    leadPlayerName: 'Guest Player',
     phone: '+91 98765 43210',
-    email: 'adil.sports@gmail.com'
+    email: 'guest@sportspace.com'
   },
   {
     id: 'SS-2026-28100',
@@ -370,9 +370,9 @@ export const INITIAL_BOOKINGS: Booking[] = [
     qrPasscode: '8100',
     image:
       'https://lh3.googleusercontent.com/aida-public/AB6AXuBCJEo3JUZ3i4tMBz_1TX4awSPXuDBpb0woXe2fdl9POqBflilh2oYg1OoSY_NinpdxxfZsg_WwgADTsbv5bAzM7xxbVN_ZmHlVk7OCTbwoL1lotI0t6tQhKhy5ivZCafO_EPP5X9ksHJ9ajZbFmGg1wzIf9EE_eEsc6cHvEhYork4xACctD796RvryrQ6dqiEXrJLEwv83uZvv3ad2PYtyRhnHSiIAO0VgMJVM8Yr4QxQqaWH_ViVL',
-    leadPlayerName: 'Adil Farooq',
+    leadPlayerName: 'Guest Player',
     phone: '+91 98765 43210',
-    email: 'adil.sports@gmail.com'
+    email: 'guest@sportspace.com'
   }
 ];
 

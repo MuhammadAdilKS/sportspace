@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 
 export default function BookingSummaryScreen() {
   const router = useRouter();
-  const [name, setName] = useState("Adil Farooq");
+  const [name, setName] = useState("Guest Player");
   const [phone, setPhone] = useState("+91 98765 43210");
-  const [email, setEmail] = useState("adil.sports@gmail.com");
+  const [email, setEmail] = useState("guest@sportspace.com");
   const [whatsappOptIn, setWhatsappOptIn] = useState(true);
   const [securing, setSecuring] = useState(false);
 
@@ -18,8 +18,8 @@ export default function BookingSummaryScreen() {
       const savedName = localStorage.getItem("sportspace_user_name");
       const savedEmail = localStorage.getItem("sportspace_user_email");
       if (savedPhone) setPhone(savedPhone);
-      if (savedName) setName(savedName);
-      if (savedEmail) setEmail(savedEmail);
+      if (savedName && !savedName.toLowerCase().includes("adil")) setName(savedName);
+      if (savedEmail && !savedEmail.toLowerCase().includes("adil")) setEmail(savedEmail);
     }
   }, []);
 

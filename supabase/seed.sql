@@ -275,12 +275,12 @@ INSERT INTO public.bookings (
   1608,
   'upcoming',
   'Confirmed • In 2 Days',
-  'UPI (adil@okaxis)',
+  'UPI (player@okaxis)',
   '4829',
   'https://lh3.googleusercontent.com/aida-public/AB6AXuDXQiEwNd77VqW74_L_utRwQD5xQEfD3mcuzX__DAvSNYejA0Et3iRs4JzH_4g0pPp2fiHcx92MWXPJTgoOvG0iuc9JYZU7mgD-pXjgE6TJitlmKdSN_zUn71ABbrEve5U8H4YLuGipwY2rrRlZO0sr_y-snm8K5i0gtg0PCW5hjHJHb-XmobqeaGudZQGOlFxgN5FO1KDWD4nE045y0-Gxx5t79QU_tPgL-YXW7-TEzzSfueSU2q5B',
-  'Adil Farooq',
+  'Guest Player',
   '+91 98765 43210',
-  'adil.sports@gmail.com',
+  'guest@sportspace.com',
   'Locker & Bibs included'
 ),
 (
@@ -299,9 +299,9 @@ INSERT INTO public.bookings (
   'UPI',
   '9102',
   'https://lh3.googleusercontent.com/aida-public/AB6AXuDWht86Ufsz4m0V4M0oAouT_AhHRTHxCuv8IIvomah66YWJOCDBT7JNPz-iqP5g47RCwjVlurMflzTkB0xLO9ccgC9wjuKdSVua12ZBhEh9MkmVRc65D1u4yblH4HB-CELjqZWGOSjB95JxEPdeAZk0NRHJYrEkBYXD5lPZNaU8yOGMk-P0HMQUjB7g4_-2s4HUDY1Omx4m1-msrgaLVJH1RFA5QCAvsQSIsI8npnVKUoLMfjjJa2iB',
-  'Adil Farooq',
+  'Guest Player',
   '+91 98765 43210',
-  'adil.sports@gmail.com',
+  'guest@sportspace.com',
   NULL
 )
 ON CONFLICT (id) DO NOTHING;

@@ -9,7 +9,7 @@ import { Booking } from "@/lib/mockData";
 export default function PaymentScreen() {
   const router = useRouter();
   const [activeMethod, setActiveMethod] = useState<"upi" | "card" | "netbanking" | "wallets">("upi");
-  const [upiId, setUpiId] = useState("adil@okaxis");
+  const [upiId, setUpiId] = useState("player@okaxis");
   const [processing, setProcessing] = useState(false);
 
   const handlePay = async () => {
@@ -18,9 +18,9 @@ export default function PaymentScreen() {
     const newBookingId = `SS-2026-${randomNum}`;
     const qrPasscode = Math.floor(1000 + Math.random() * 9000).toString();
 
-    let leadName = "Adil Farooq";
+    let leadName = "Guest Player";
     let leadPhone = "+91 98765 43210";
-    let leadEmail = "adil.sports@gmail.com";
+    let leadEmail = "guest@sportspace.com";
 
     if (typeof window !== "undefined") {
       leadName = localStorage.getItem("sportspace_lead_name") || leadName;
@@ -233,7 +233,7 @@ export default function PaymentScreen() {
                     </div>
                     <span className="font-caption text-caption text-secondary flex items-center gap-1 mt-0.5">
                       <span className="material-symbols-outlined text-[14px]">check_circle</span>
-                      Verified: Adil Farooq
+                      Verified: Guest Player
                     </span>
                   </div>
                 </div>

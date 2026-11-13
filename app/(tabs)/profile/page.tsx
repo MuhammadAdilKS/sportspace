@@ -10,9 +10,9 @@ export default function ProfilePage() {
   const router = useRouter();
   const [notificationsActive, setNotificationsActive] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [userName, setUserName] = useState("Adil Farooq");
+  const [userName, setUserName] = useState("Guest Player");
   const [userPhone, setUserPhone] = useState("+91 98765 43210");
-  const [userEmail, setUserEmail] = useState("adil.sports@gmail.com");
+  const [userEmail, setUserEmail] = useState("guest@sportspace.com");
 
   useEffect(() => {
     // 1. Check local storage
@@ -21,8 +21,8 @@ export default function ProfilePage() {
       const savedName = localStorage.getItem("sportspace_user_name");
       const savedEmail = localStorage.getItem("sportspace_user_email");
       if (savedPhone) setUserPhone(savedPhone);
-      if (savedName) setUserName(savedName);
-      if (savedEmail) setUserEmail(savedEmail);
+      if (savedName && !savedName.toLowerCase().includes("adil")) setUserName(savedName);
+      if (savedEmail && !savedEmail.toLowerCase().includes("adil")) setUserEmail(savedEmail);
     }
 
     // 2. Check Supabase auth session
@@ -70,7 +70,7 @@ export default function ProfilePage() {
             <div className="flex items-center gap-3">
               <div className="relative">
                 <img
-                  alt="Adil Farooq profile portrait"
+                  alt="Profile portrait"
                   className="w-16 h-16 rounded-full object-cover shadow-sm bg-surface-variant p-0.5 border border-white/30"
                   src={USER_AVATAR}
                 />
@@ -225,7 +225,7 @@ export default function ProfilePage() {
               <span className="font-label-sm text-sm text-on-surface font-semibold">
                 Saved UPI &amp; Cards
               </span>
-              <span className="font-caption text-xs text-on-surface-variant">adil@okaxis</span>
+              <span className="font-caption text-xs text-on-surface-variant">guest@okaxis</span>
             </div>
           </div>
           <span className="material-symbols-outlined text-outline text-[18px]">chevron_right</span>

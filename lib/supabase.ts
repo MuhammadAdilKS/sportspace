@@ -53,7 +53,7 @@ export async function fetchVenues(): Promise<Venue[]> {
       openingHours: v.opening_hours || v.openingHours || "Mon - Sun: 06:00 AM - 11:30 PM",
       openingDays: v.opening_days || v.openingDays || "All 7 Days",
       featuredReview: v.featured_review || v.featuredReview || {
-        author: "Adil",
+        author: "Guest Player",
         avatar: "",
         sportTag: "Football",
         timeAgo: "Recently",
@@ -111,7 +111,7 @@ export async function fetchVenueById(id: string): Promise<Venue> {
       openingHours: v.opening_hours || v.openingHours || "Mon - Sun: 06:00 AM - 11:30 PM",
       openingDays: v.opening_days || v.openingDays || "All 7 Days",
       featuredReview: v.featured_review || v.featuredReview || {
-        author: "Adil",
+        author: "Guest Player",
         avatar: "",
         sportTag: "Football",
         timeAgo: "Recently",
@@ -156,9 +156,9 @@ export async function fetchUserBookings(userEmailOrPhone?: string): Promise<Book
       paymentMethod: b.payment_method || b.paymentMethod || "UPI",
       qrPasscode: b.qr_passcode || b.qrPasscode || "1234",
       image: b.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuDXQiEwNd77VqW74_L_utRwQD5xQEfD3mcuzX__DAvSNYejA0Et3iRs4JzH_4g0pPp2fiHcx92MWXPJTgoOvG0iuc9JYZU7mgD-pXjgE6TJitlmKdSN_zUn71ABbrEve5U8H4YLuGipwY2rrRlZO0sr_y-snm8K5i0gtg0PCW5hjHJHb-XmobqeaGudZQGOlFxgN5FO1KDWD4nE045y0-Gxx5t79QU_tPgL-YXW7-TEzzSfueSU2q5B",
-      leadPlayerName: b.lead_player_name || b.leadPlayerName || "Adil",
+      leadPlayerName: b.lead_player_name || b.leadPlayerName || "Guest Player",
       phone: b.phone || "+91 98765 43210",
-      email: b.email || "adil.sports@gmail.com",
+      email: b.email || "guest@sportspace.com",
       notes: b.notes,
     }));
   } catch {

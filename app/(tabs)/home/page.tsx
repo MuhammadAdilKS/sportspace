@@ -1,8 +1,20 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 export default function HomeDashboard() {
+    const [userName, setUserName] = useState("Guest");
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const saved = localStorage.getItem("sportspace_user_name");
+            if (saved && !saved.toLowerCase().includes("adil")) {
+                setUserName(saved);
+            }
+        }
+    }, []);
+
     return (
         <div className="flex flex-col w-full pb-24">
             {/* Top Greeting & Header Bar */}
@@ -10,14 +22,14 @@ export default function HomeDashboard() {
                 <div className="flex items-center gap-space-sm">
                     <div className="relative shrink-0">
                         <img
-                            alt="Adil Profile Avatar"
+                            alt="Profile Avatar"
                             className="w-[38px] h-[38px] rounded-full object-cover shadow-sm bg-surface-container"
                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuATvOyzGioJOeigEBOQw2kDqRIldpVuBrmxHnM_JvzPyXm5wcVqPfKasWYMcyMviKF8FqLC8wXrkLQ-nvOE6RFNa_PIF-xg4cTWTkY2kM0mC2w_HfIQjpPoGCMijdxmcGMsh1CBQENYrd98scD1_rSdEZgRjYtG_nHiLz6leesghQhTQrewYgbHBuyxA0UITYS98AW7T4eWRo8yC9RG_HBx0P9BINDcDRPeWGJ4uelER5ec73Rd1rxH"
                         />
                         <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-secondary-fixed-dim rounded-full shadow-[0_0_0_2px_#ffffff]" />
                     </div>
                     <div className="flex flex-col">
-                        <h2 className="font-headline-md text-headline-md text-primary tracking-tight">Hi, Adil 👋</h2>
+                        <h2 className="font-headline-md text-headline-md text-primary tracking-tight">Hi, {userName} 👋</h2>
                         <p className="font-body-md text-body-md text-on-surface-variant -mt-0.5">Ready to play today?</p>
                     </div>
                 </div>
